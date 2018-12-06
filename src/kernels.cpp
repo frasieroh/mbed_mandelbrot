@@ -35,7 +35,8 @@ void drawCInt(Mandelbrot* brot, DmTftBase* screen)
     int32_t cy; // Original y-coord
     int32_t zx; // Current x-coord
     int32_t zy; // Current y-coord
-    int32_t zxTemp; // Stores x-coord during calculation
+    int64_t zxzx; // Squares
+    int64_t zyzy;
     uint32_t n; // Iterations
     
     for (uint16_t i = 0; i < brot->width; ++i) {
@@ -51,14 +52,15 @@ void drawCInt(Mandelbrot* brot, DmTftBase* screen)
             zy = cy;
             
             for (n = 0; n < brot->maxiters; ++n) {
-                zxTemp = ((int64_t)zx*zx - (int64_t)zy*zy) >> 28;
-                zxTemp += cx;
-                zy = (2*(int64_t)zx*zy) >> 28;
-                zy += cy;
-                zx = zxTemp;
-                if ((int64_t)zx*zx + (int64_t)zy*zy >= (4LL << 56)) {
+                zxzx = (int64_t)zx*zx;
+                zyzy = (int64_t)zy*zy;
+                if (zxzx + zyzy >= (288230376151711744LL)) {
                     break;
                 }
+                zy = (2*(int64_t)zx*zy) >> 28;
+                zy += cy;
+                zx = (zxzx - zyzy) >> 28;
+                zx += cx;
             }
             
             uint16_t color = brot->getColor(n);
@@ -74,7 +76,8 @@ void drawCFlt(Mandelbrot* brot, DmTftBase* screen)
     float cy; // Original y-coord
     float zx; // Current x-coord
     float zy; // Current y-coord
-    float zxTemp; // Stores x-coord during calculation
+    float zxzx; // Squares
+    float zyzy;
     uint32_t n; // Iterations
     
     for (uint16_t i = 0; i < brot->width; ++i) {
@@ -89,12 +92,13 @@ void drawCFlt(Mandelbrot* brot, DmTftBase* screen)
             zy = cy;
             
             for (n = 0; n < brot->maxiters; ++n) {
-                zxTemp = zx*zx - zy*zy + cx;
-                zy = 2*zx*zy + cy;
-                zx = zxTemp;
-                if (zx*zx + zy*zy > 4) {
+                zxzx = zx*zx;
+                zyzy = zy*zy;
+                if (zxzx + zyzy > 4) {
                     break;
                 }
+                zy = 2*zx*zy + cy;
+                zx = zxzx - zyzy + cx;
             }
             
             uint16_t color = brot->getColor(n);
