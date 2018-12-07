@@ -32,8 +32,7 @@ iterate_loop_start
     SMULL   R11, R12, R4, R5    ; Compute zy = 2*zx*zy + cy
     ASR     R11, #28            ; Perform right shift by 28 places on R11:R12
     BFI     R11, R12, #4, #28
-    LSL     R11, #1             ; Multiply by 2
-    ADD     R5, R11, R1         ; Add cy and store in R5 
+    ADD     R5, R1, R11, LSL #1 ; Add cy to twice R11 and store in R5 
     SUBS    R11, R7, R9         ; Compute zx = zx^2 - zy^2 + cx
     SBC     R12, R8, R10    
     ASR     R11, #28            ; Perform right shift by 28 places on R11:R12
@@ -47,3 +46,4 @@ iterate_loop_end
     POP     {R4, R5, R6, R7, R8, R9, R10, R11, R12}
     BX      LR
     END
+
