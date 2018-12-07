@@ -30,17 +30,15 @@ iterate_loop_start
     CMP     R12, R6             ; bits. Okay to ignore low order sum and carry
     BGE     iterate_loop_end    ; Escape condition
     SMULL   R11, R12, R4, R5    ; Compute zy = 2*zx*zy + cy
-    LSL     R12, #4             ; Perform right shift by 28 places on R11:R12
-    ASR     R11, #28
-    BFI     R12, R11, #0, #4
-    LSL     R12, #1             ; Multiply by 2
-    ADD     R5, R12, R1         ; Add cy and store in R5 
+    ASR     R11, #28            ; Perform right shift by 28 places on R11:R12
+    BFI     R11, R12, #4, #28
+    LSL     R11, #1             ; Multiply by 2
+    ADD     R5, R11, R1         ; Add cy and store in R5 
     SUBS    R11, R7, R9         ; Compute zx = zx^2 - zy^2 + cx
-    SBC     R12, R8, R10
-    LSL     R12, #4             ; Perform right shift by 28 places on R11:R12
-    ASR     R11, #28
-    BFI     R12, R11, #0, #4
-    ADD     R4, R12, R0         ; Add cx and store in R4
+    SBC     R12, R8, R10    
+    ASR     R11, #28            ; Perform right shift by 28 places on R11:R12
+    BFI     R11, R12, #4, #28
+    ADD     R4, R11, R0         ; Add cx and store in R4
     ADD     R3, #1              ; Increment counter and loop
     B       iterate_loop_start
 iterate_loop_end
